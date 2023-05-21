@@ -1,0 +1,100 @@
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
+const Charts: React.FC<ICharts> = ({ options, type, data }) => {
+  return (
+    <ResponsiveContainer
+      width={options?.responsiveContainer?.width}
+      height={options?.responsiveContainer?.height}
+    >
+      {type === "radar" ? (
+        <RadarChart
+          outerRadius={options?.radar?.style?.container.outerRadius}
+          width={options?.radar?.style?.container.width}
+          height={options?.radar?.style?.container.height}
+          data={data}
+        >
+          <PolarGrid />
+          <PolarAngleAxis dataKey="subject" />
+          <PolarRadiusAxis
+            angle={options?.radar?.style?.radius?.angle}
+            domain={options?.radar?.style?.radius?.domain}
+          />
+          {options?.radar?.chart.map((chart, index) => (
+            <Radar
+              key={index}
+              name={chart.name}
+              dataKey={chart.dataKey}
+              stroke={chart.stroke}
+              fill={chart.fill}
+              fillOpacity={chart.fillOpacity}
+            />
+          ))}
+          <Legend />
+        </RadarChart>
+      ) : type === "line" ? (
+        <LineChart
+          width={options.line?.style?.container?.width}
+          height={options.line?.style?.container?.height}
+          data={data}
+          margin={options.line?.style?.container?.margin}
+        >
+          <CartesianGrid
+            strokeDasharray={options.line?.style?.strokeDasharray}
+          />
+          <XAxis dataKey={options?.line?.dataKey} />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          {options.line?.chart.map((line, index) => (
+            <Line
+              key={index}
+              type={line.type}
+              dataKey={line.dataKeyLine}
+              stroke={line.lineColor}
+            />
+          ))}
+        </LineChart>
+      ) : type === "bar" ? (
+        <BarChart
+          width={options.bar?.style?.container?.width}
+          height={options.bar?.style?.container?.height}
+          data={data}
+        >
+          <CartesianGrid
+            strokeDasharray={options.bar?.style?.strokeDasharray}
+          />
+          <XAxis dataKey={options?.bar?.dataKey} />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          {options.bar?.chart.map((bar, index) => (
+            <Bar key={index} dataKey={bar.dataKeyLine} fill={bar.lineColor} />
+          ))}
+        </BarChart>
+      ) : (
+        <div></div>
+      )}
+    </ResponsiveContainer>
+  );
+};
+
+export default Charts;

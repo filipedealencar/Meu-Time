@@ -1,5 +1,5 @@
+import { MontSerrat } from "@/styles/GlobalStyles/GlobalStyles";
 import { styled } from "styled-components";
-import { MontSerrat } from "../../../public/GlobalStyles/GlobalStyles";
 
 const WrapperLogin = styled.section`
   align-items: center;
@@ -19,7 +19,7 @@ const WrapperLogin = styled.section`
 export const CardContainer = styled.div`
   height: auto;
   margin: 0 auto;
-  max-width: 370px;
+  max-width: 500px;
   width: 100%;
 `;
 
@@ -87,6 +87,7 @@ export const ButtonsActions = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor: pointer;
 
   @media only screen and (max-width: 500px) {
     width: 100%;
@@ -105,6 +106,7 @@ export const ButtonSubmit = styled.button`
   justify-content: center;
   padding: 0 18px;
   font-family: ${MontSerrat.style.fontFamily};
+  cursor: pointer;
 
   @media only screen and (max-width: 500px) {
     width: 67%;
