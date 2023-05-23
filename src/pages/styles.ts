@@ -21,8 +21,12 @@ export const ContentHome = styled.div`
 `;
 
 export const HomeCard = styled.div`
+  display: flex;
+  justify-content: center;
   border-radius: 20px;
-  background: #fff;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.24);
+  box-shadow: 0 25px 20px -20px rgba(0, 0, 0, 0.1), 0 0 15px rgba(0, 0, 0, 0.06);
 `;
 
 export default TemplateMain;

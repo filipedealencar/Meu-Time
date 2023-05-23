@@ -2,9 +2,9 @@ type chartTypes = "radar" | "line" | "bar" | "area";
 
 interface Radar {
   subject: string;
-  A: number;
-  B: number;
-  fullMark: number;
+  A?: number;
+  B?: number;
+  fullMark?: number;
 }
 interface Line {
   name: string;
@@ -28,6 +28,7 @@ interface ICharts {
   type: chartTypes;
   data: Radar[] | Line[] | Bar[] | Area[];
   options: {
+    label?: string;
     responsiveContainer?: {
       width?: number | string;
       height?: number | string;
@@ -42,8 +43,8 @@ interface ICharts {
             bottom?: number;
             left?: number;
           };
-          width: number;
-          height: number;
+          width?: number;
+          height?: number;
         };
       };
       dataKey: string;
@@ -81,6 +82,8 @@ interface ICharts {
     bar?: {
       style?: {
         strokeDasharray?: number | string;
+        labelX?: object;
+        labelY?: object;
         container?: {
           width: number;
           height: number;

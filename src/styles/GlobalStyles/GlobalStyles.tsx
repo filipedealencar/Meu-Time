@@ -14,7 +14,11 @@ const GlobalStyle = createGlobalStyle`
 
 
   body {
-    background: #000;
+    background: radial-gradient(farthest-side ellipse at 10% 0,#333867 20%,#17193b);
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+
     color: #8ea2ab;
     font-family:${OpenSans.style.fontFamily};
     font-size: .875rem;
