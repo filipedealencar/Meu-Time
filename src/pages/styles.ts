@@ -5,7 +5,7 @@ const TemplateMain = styled.section`
   flex-direction: column;
   align-items: stretch;
   flex: 1 1;
-  margin: 36px 73px 0px;
+  margin: 36px 40px 0px;
 `;
 
 export const ContainerHome = styled.div`

@@ -10,139 +10,182 @@ import CustomTable from "@/Components/CustomTable";
 import { createColumnHelper } from "@tanstack/react-table";
 import { BadgePlayers } from "@/Components/CustomTable/BadgePlayers";
 import { GlobalContext } from "@/Contexts/GlobalContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import { Maps } from "@/Components/Maps";
 import { Header } from "@/Components/Header";
 import { Loading } from "@/Components/Loading";
 import { Forms } from "@/Components/Forms";
-import { getCountries, getSeasons } from "@/Services/football";
+import {
+  getCountries,
+  getPlayers,
+  getSeasons,
+  getTeamsStatistics,
+} from "@/Services/football";
 
 export const Home: React.FC = () => {
-  const { token, formData, authenticatedUser, setFormData } =
-    useContext(GlobalContext);
+  const {
+    token,
+    formData,
+    authenticatedUser,
+    setAuthenticatedUser,
+    setFormData,
+  } = useContext(GlobalContext);
+  const tokenErrorMsg =
+    "Error/Missing application key. Go to https://www.api-football.com/documentation-v3 to learn how to get your API application key.";
   const daylyLimitMsg =
     "You have reached the request limit for the day, Go to https://dashboard.api-football.com to upgrade your plan.";
   const [loadingRequest, setLoadinRequest] = useState(true);
   const [session, setSession] = useState([]);
   const router = useRouter();
 
+  const [teamsStatistic, setTeamsStatistic] = useState({
+    formation: [],
+    players: [],
+    goals: [],
+  });
+
+  const refDashboard = useRef<HTMLDivElement>(null);
+
+  const [enableDashboard, setEnableDashboard] = useState({
+    enable: true,
+    loading: false,
+  });
+
   useEffect(() => {
+    if (formData.teams.name === "" || formData.teams.name === undefined) {
+      return setEnableDashboard({
+        enable: false,
+        loading: true,
+      });
+    }
+    getPlayers(
+      token,
+      String(formData.leagues.id),
+      String(formData.teams.id),
+      String(formData.seasons.value)
+    ).then((res: any) => {
+      console.log(res);
+      setTeamsStatistic((statistic) => {
+        return {
+          ...statistic,
+          players: res?.response?.map(({ player }: any) => ({
+            Nome: {
+              name: player.name,
+              img: player.photo,
+            },
+            País: player.nationality,
+            Idade: player.age,
+          })),
+        };
+      });
+    });
+    getTeamsStatistics(
+      token,
+      String(formData.leagues.id),
+      String(formData.teams.id),
+      String(formData.seasons.value)
+    ).then((res: any) => {
+      setTeamsStatistic((statistic) => {
+        return {
+          ...statistic,
+          formation: res?.response?.lineups.slice(0, 4).map((item: any) => {
+            return {
+              name: item?.formation,
+              Formações: item?.played,
+            };
+          }),
+          goals: Object.entries(res?.response?.goals?.for?.minute)
+            .slice(0, 4)
+            .map(([key, value]: any) => ({
+              name: key,
+              total: value?.total,
+              Porcentagem: Number(value?.percentage.split("%")[0]),
+            })) as any,
+        };
+      });
+    });
+
+    setEnableDashboard((state) => {
+      return {
+        ...state,
+        enable: true,
+      };
+    });
+
     setTimeout(() => {
-      setLoadinRequest(false);
+      setEnableDashboard((state) => {
+        return {
+          ...state,
+          loading: false,
+        };
+      });
     }, 3000);
-  }, []);
+  }, [formData]);
+
+  const smoothScrollToPosition = (targetPosition: number, duration: number) => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const startPosition = window?.pageYOffset;
+    const distance = targetPosition - startPosition;
+    let startTime: number | null = null;
+
+    const easeOutQuad = (
+      t: number,
+      b: number,
+      c: number,
+      d: number
+    ): number => {
+      t /= d;
+      return -c * t * (t - 2) + b;
+    };
+
+    const scrollAnimation = (currentTime: number) => {
+      if (startTime === null) {
+        startTime = currentTime;
+      }
+
+      const elapsedTime = currentTime - startTime;
+      const scrollProgress = easeOutQuad(
+        elapsedTime,
+        startPosition,
+        distance,
+        duration
+      );
+      window?.scrollTo(0, scrollProgress);
+
+      if (elapsedTime < duration) {
+        requestAnimationFrame(scrollAnimation);
+      }
+    };
+
+    requestAnimationFrame(scrollAnimation);
+  };
+
+  console.log(teamsStatistic);
+
+  useEffect(() => {
+    if (formData.teams.name === "" || formData.teams.name === undefined) return;
+    if (typeof window === "undefined") return;
+    if (!refDashboard?.current) return;
+    const targetPosition =
+      refDashboard?.current?.getBoundingClientRect()?.top + window.pageYOffset;
+    const duration = 1000;
+    if (formData.teams.name !== "" && formData.teams.name !== undefined) {
+      setTimeout(() => {
+        smoothScrollToPosition(targetPosition, duration);
+      }, 1000);
+    }
+  }, [formData.teams.id]);
   const layout = [
     { i: "a", x: 0, y: 0, w: 1.3, h: 3.2, static: true },
     { i: "b", x: 1.3, y: 0, w: 1.3, h: 3.2 },
     // { i: "c", x: 2, y: 0, w: 1, h: 2 },
     { i: "c", x: 3, y: 0, w: 1.4, h: 7.7 },
     { i: "d", x: 0, y: 1, w: 2.6, h: 4.5 },
-  ];
-
-  const data = [
-    {
-      subject: "Gols",
-      A: 120,
-      fullMark: 150,
-    },
-    {
-      subject: "Gols Perdidos",
-      A: 98,
-      fullMark: 150,
-    },
-    {
-      subject: "Penaltis",
-      A: 86,
-      fullMark: 150,
-    },
-    {
-      subject: "Defesas",
-      A: 85,
-      fullMark: 150,
-    },
-  ];
-
-  const data1 = [
-    {
-      name: "Page A",
-      uv: 4000,
-      pv: 2400,
-      amt: 2400,
-    },
-    {
-      name: "Page B",
-      uv: 3000,
-      pv: 1398,
-      amt: 2210,
-    },
-    {
-      name: "Page C",
-      uv: 2000,
-      pv: 9800,
-      amt: 2290,
-    },
-    {
-      name: "Page D",
-      uv: 2780,
-      pv: 3908,
-      amt: 2000,
-    },
-    {
-      name: "Page E",
-      uv: 1890,
-      pv: 4800,
-      amt: 2181,
-    },
-    {
-      name: "Page F",
-      uv: 2390,
-      pv: 3800,
-      amt: 2500,
-    },
-    {
-      name: "Page G",
-      uv: 3490,
-      pv: 4300,
-      amt: 2100,
-    },
-  ];
-
-  const data2 = [
-    {
-      name: "4-2-3-1",
-      Formações: 32,
-    },
-    {
-      name: "3-4-1-2",
-      Formações: 4,
-    },
-    {
-      name: "3-4-2-1",
-      Formações: 1,
-    },
-    {
-      name: "4-3-1-2",
-      Formações: 1,
-    },
-  ];
-  const data3 = [
-    {
-      name: "0-15",
-      total: 4,
-      Porcentagem: 6.06,
-    },
-    {
-      name: "16-30",
-      total: 4,
-      Porcentagem: 25.76,
-    },
-    {
-      name: "31-45",
-      total: 4,
-      Porcentagem: 16.67,
-    },
   ];
 
   const defaultData = [
@@ -218,6 +261,12 @@ export const Home: React.FC = () => {
     }
   }, [authenticatedUser]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setLoadinRequest(false);
+    }, 2000);
+  }, []);
+
   const getCurrentCountries = (name: string) => {
     return getCountries(token, name)
       .then((res: any) => {
@@ -225,8 +274,13 @@ export const Home: React.FC = () => {
           return toast.error(
             "Você atingiu o limite de solicitações diárias. Tente novamente mais tarde"
           );
+        } else if (res.errors?.token === tokenErrorMsg) {
+          setAuthenticatedUser(false);
+          router.push("/login");
+          return toast.error(
+            "Não foi possível realizar a solicitação. Verifique seu token"
+          );
         }
-        console.log(res);
         setFormData((state) => {
           return {
             ...state,
@@ -241,6 +295,12 @@ export const Home: React.FC = () => {
           if (res?.errors.requests === daylyLimitMsg) {
             return toast.error(
               "Você atingiu o limite de solicitações diárias. Tente novamente mais tarde"
+            );
+          } else if (res.errors?.token === tokenErrorMsg) {
+            setAuthenticatedUser(false);
+            router.push("/login");
+            return toast.error(
+              "Não foi possível realizar a solicitação. Verifique seu token"
             );
           }
           setSession(season?.response);
@@ -275,100 +335,102 @@ export const Home: React.FC = () => {
           )}
           <Forms session={session} placeholder="Selecione" />
         </ContentForm>
-        {/* <ContainerHome>
-          <ContentHome>
-            <GridLayout
-              isDraggable={false}
-              layout={layout}
-              cols={4}
-              rowHeight={80}
-              width={1200}
-            >
-              <HomeCard style={{ alignItems: "end" }} key="a">
-                {loadingRequest ? (
-                  <Loading type={"chart"} />
-                ) : (
-                  <Charts
-                    options={{
-                      label: "Formações mais utilizadas na temporada",
-                      responsiveContainer: { width: "90%", height: "90%" },
-                      bar: {
-                        style: {
-                          strokeDasharray: "3 3",
-                          container: {
-                            width: 300,
-                            height: 200,
+        {enableDashboard.enable && (
+          <ContainerHome ref={refDashboard}>
+            <ContentHome>
+              <GridLayout
+                isDraggable={false}
+                layout={layout}
+                cols={4}
+                rowHeight={80}
+                width={1200}
+              >
+                <HomeCard style={{ alignItems: "end" }} key="a">
+                  {enableDashboard.loading ? (
+                    <Loading type={"chart"} />
+                  ) : (
+                    <Charts
+                      options={{
+                        label: "Formações mais utilizadas na temporada",
+                        responsiveContainer: { width: "90%", height: "90%" },
+                        bar: {
+                          style: {
+                            strokeDasharray: "3 3",
+                            container: {
+                              width: 300,
+                              height: 200,
+                            },
                           },
+                          dataKey: "name",
+                          chart: [
+                            {
+                              dataKeyLine: "Formações",
+                              lineColor: "#8884d8",
+                            },
+                          ],
                         },
-                        dataKey: "name",
-                        chart: [
-                          {
-                            dataKeyLine: "Formações",
-                            lineColor: "#8884d8",
+                      }}
+                      type="bar"
+                      data={teamsStatistic.formation}
+                    />
+                  )}
+                </HomeCard>
+                <HomeCard key="b">
+                  {enableDashboard.loading ? (
+                    <Loading type={"chart"} />
+                  ) : (
+                    <Charts
+                      options={{
+                        label: "Gols marcados por tempo de jogo",
+                        responsiveContainer: { width: "90%", height: "90%" },
+                        bar: {
+                          style: {
+                            strokeDasharray: "3 3",
+                            container: {
+                              width: 300,
+                              height: 600,
+                            },
                           },
-                        ],
-                      },
-                    }}
-                    type="bar"
-                    data={data2}
-                  />
-                )}
-              </HomeCard>
-              <HomeCard key="b">
-                {loadingRequest ? (
-                  <Loading type={"chart"} />
-                ) : (
-                  <Charts
-                    options={{
-                      label: "Gols marcados por tempo de jogo",
-                      responsiveContainer: { width: "90%", height: "90%" },
-                      bar: {
-                        style: {
-                          strokeDasharray: "3 3",
-                          container: {
-                            width: 300,
-                            height: 600,
-                          },
+                          dataKey: "name",
+                          chart: [
+                            {
+                              dataKeyLine: "Porcentagem",
+                              lineColor: "#84d88b",
+                            },
+                          ],
                         },
-                        dataKey: "name",
-                        chart: [
-                          {
-                            dataKeyLine: "Porcentagem",
-                            lineColor: "#84d88b",
-                          },
-                        ],
-                      },
-                    }}
-                    type="bar"
-                    data={data3}
-                  />
-                )}
-              </HomeCard>
-              <HomeCard key="c">
-                {" "}
-                {loadingRequest ? (
-                  <Loading type={"listY"} />
-                ) : (
-                  <CustomTable
-                    columnsSize={[50, 25, 25]}
-                    columns={columns}
-                    dataDefault={defaultData}
-                  />
-                )}
-              </HomeCard>
-              <HomeCard key="d">
-                {loadingRequest ? (
-                  <Loading type={"listX"} />
-                ) : (
-                  <CustomTable
-                    columns={columnsTwo}
-                    dataDefault={defaultDataTwo}
-                  />
-                )}
-              </HomeCard>
-            </GridLayout>
-          </ContentHome>
-        </ContainerHome> */}
+                      }}
+                      type="bar"
+                      data={teamsStatistic.goals}
+                    />
+                  )}
+                </HomeCard>
+                <HomeCard key="c">
+                  {" "}
+                  {enableDashboard.loading ? (
+                    <Loading type={"listY"} />
+                  ) : (
+                    <CustomTable
+                      columnsSize={[30, 35, 35]}
+                      columns={columns}
+                      dataDefault={teamsStatistic.players}
+                    />
+                  )}
+                </HomeCard>
+                <HomeCard key="d">
+                  {enableDashboard.loading ? (
+                    <Loading type={"listX"} />
+                  ) : (
+                    <CustomTable
+                      columns={columnsTwo}
+                      dataDefault={defaultDataTwo}
+                    />
+                  )}
+                </HomeCard>
+              </GridLayout>
+            </ContentHome>
+          </ContainerHome>
+        )}
       </TemplateMain>
     </>
   ) : null;

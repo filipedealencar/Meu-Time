@@ -6,6 +6,7 @@ import {
   Exit,
   SelectionHeader,
   Separator,
+  TextSelection,
   UseName,
 } from "./styles";
 import avatar from "../../../public/image/avatar.png";
@@ -45,7 +46,7 @@ export const Header: React.FC<IHeader> = ({}) => {
                   priority
                 />
               )}
-            {formData.country.name}
+            <TextSelection> {formData.country.name} </TextSelection>
           </ContentSelection>
 
           <ContentSelection
@@ -65,7 +66,7 @@ export const Header: React.FC<IHeader> = ({}) => {
                   priority
                 />
               )}
-            {formData.leagues.name}
+            <TextSelection> {formData.leagues.name} </TextSelection>
           </ContentSelection>
           <ContentSelection
             $isVisible={
@@ -83,11 +84,11 @@ export const Header: React.FC<IHeader> = ({}) => {
                   priority
                 />
               )}
-            {formData.teams.name}
+            <TextSelection> {formData.teams.name}</TextSelection>
           </ContentSelection>
         </SelectionHeader>
       </ContentHeader>
-      <ContentHeader style={{ justifyContent: "end" }}>
+      <ContentHeader style={{ justifyContent: "end", width: "25%" }}>
         <Image src={avatar} width={30} height={30} alt={"Avatar"} priority />
         <UseName>{`${userData?.name} ${userData?.surname}`}</UseName>
         <Separator>|</Separator>

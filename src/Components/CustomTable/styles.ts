@@ -16,11 +16,11 @@ export const ContainerTable = styled.div`
   height: 100%;
 `;
 
-export const Table = styled.table`
+export const Table = styled.table<{ $maxHeight?: number }>`
   width: 100%;
   height: 100%;
   position: relative;
-  max-height: 310px;
+  max-height: ${({ $maxHeight }) => ($maxHeight ? $maxHeight : 310)}px;
 `;
 
 export const Thead = styled.thead`

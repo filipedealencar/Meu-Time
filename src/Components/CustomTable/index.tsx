@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 
 import {
   getCoreRowModel,
@@ -15,7 +15,7 @@ const CustomTable: React.FC<ICustomTable> = ({
   columnsSize,
 }) => {
   const data = React.useMemo(() => [...dataDefault], []);
-
+  const refCustomTable = useRef<HTMLDivElement>(null);
   const table = useReactTable({
     data,
     columns,
@@ -28,8 +28,15 @@ const CustomTable: React.FC<ICustomTable> = ({
   });
 
   return (
-    <WrapperCustomTable>
-      <Table>
+    <WrapperCustomTable ref={refCustomTable}>
+      <Table
+        $maxHeight={
+          refCustomTable?.current
+            ? refCustomTable?.current?.getBoundingClientRect()?.height -
+              refCustomTable?.current?.getBoundingClientRect()?.height * 0.2
+            : undefined
+        }
+      >
         <Thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <Tr key={headerGroup.id}>

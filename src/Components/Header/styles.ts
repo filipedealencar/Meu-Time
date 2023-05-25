@@ -48,3 +48,10 @@ export const ContentSelection = styled.div<IContentSelectionStyle>`
       ? "opacity 2s linear"
       : "visibility 0s 0.5s, opacity 0.5s linear"};
 `;
+
+export const TextSelection = styled.span`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 18px;
+`;

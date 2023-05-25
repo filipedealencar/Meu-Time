@@ -19,7 +19,6 @@ export const Forms: React.FC<IForms> = ({ placeholder, session }) => {
     setTeams([]);
   }, [formData.seasons.value]);
 
-  console.log(teams);
   return (
     <WrapForms>
       <ContentForms
@@ -149,7 +148,6 @@ export const Forms: React.FC<IForms> = ({ placeholder, session }) => {
             });
           }}
         />
-        <ResetSearchButton>Resetar Busca</ResetSearchButton>
       </ContentForms>
     </WrapForms>
   );

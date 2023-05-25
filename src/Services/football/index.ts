@@ -74,3 +74,43 @@ export const getTeams = async (
     .get<user>(`teams?league=${leagueId}&season=${session}`, config)
     .then((response) => response.data);
 };
+/**Retorna o elenco do time selecionado pelo do usuário */
+export const getPlayers = async (
+  token: string,
+  leagueId: string,
+  teamId: string,
+  session: string
+): Promise<user> => {
+  let config = {
+    headers: {
+      "x-rapidapi-key": token,
+    },
+  };
+
+  return await api
+    .get<user>(
+      `players?league=${leagueId}&season=${session}&team=${teamId}`,
+      config
+    )
+    .then((response) => response.data);
+};
+/**Retorna a estatistica do time selecionado pelo do usuário */
+export const getTeamsStatistics = async (
+  token: string,
+  leagueId: string,
+  teamId: string,
+  session: string
+): Promise<user> => {
+  let config = {
+    headers: {
+      "x-rapidapi-key": token,
+    },
+  };
+
+  return await api
+    .get<user>(
+      `teams/statistics?league=${leagueId}&season=${session}&team=${teamId}`,
+      config
+    )
+    .then((response) => response.data);
+};
