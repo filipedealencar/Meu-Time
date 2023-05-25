@@ -28,5 +28,8 @@ export const HomeCard = styled.div`
   background: rgba(0, 0, 0, 0.24);
   box-shadow: 0 25px 20px -20px rgba(0, 0, 0, 0.1), 0 0 15px rgba(0, 0, 0, 0.06);
 `;
-
+export const ContentForm = styled.div`
+  display: flex;
+  width: 100%;
+`;
 export default TemplateMain;

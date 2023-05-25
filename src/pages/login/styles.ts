@@ -1,4 +1,3 @@
-import { MontSerrat } from "@/styles/GlobalStyles/GlobalStyles";
 import { styled } from "styled-components";
 
 const WrapperLogin = styled.section`
@@ -8,13 +7,6 @@ const WrapperLogin = styled.section`
   justify-content: center;
   height: 100vh;
   background: rgb(2, 0, 36);
-  background: rgb(184, 158, 90);
-  background: linear-gradient(
-    90deg,
-    rgba(184, 158, 90, 1) 0%,
-    rgba(204, 174, 94, 1) 35%,
-    rgba(255, 236, 186, 1) 100%
-  );
 `;
 export const CardContainer = styled.div`
   height: auto;
@@ -105,7 +97,6 @@ export const ButtonSubmit = styled.button`
   height: 40px;
   justify-content: center;
   padding: 0 18px;
-  font-family: ${MontSerrat.style.fontFamily};
   cursor: pointer;
 
   @media only screen and (max-width: 500px) {

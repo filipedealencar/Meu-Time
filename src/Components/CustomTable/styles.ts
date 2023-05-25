@@ -32,7 +32,7 @@ export const Tbody = styled.tbody`
   position: absolute;
   width: 100%;
   height: 100%;
-  overflow-y: auto;
+  overflow: hidden auto;
 
   &::-webkit-scrollbar {
     width: 10px;
@@ -57,12 +57,12 @@ export const Tbody = styled.tbody`
 `;
 
 export const Tr = styled.tr`
-  padding: 16px;
+  width: 100%;
+  padding: 16px 8px;
   display: flex;
 `;
 
 export const Td = styled.td`
-  width: 100% !important;
   text-align: center;
   vertical-align: middle;
 `;

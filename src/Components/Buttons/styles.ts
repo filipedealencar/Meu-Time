@@ -1,5 +1,12 @@
-import { MontSerrat } from "@/styles/GlobalStyles/GlobalStyles";
 import styled from "styled-components";
+
+interface ICustomButtonStyle {
+  $isDisabled: boolean;
+}
+
+interface ICustomLoadingStyle {
+  $isActive: boolean;
+}
 
 export const MainButton = styled.div`
   margin: 0;
@@ -8,10 +15,10 @@ export const MainButton = styled.div`
   place-items: Center;
 `;
 
-export const CustomButtons = styled.button<ICustomButtonStyle>`
+export const WrapCustomButtons = styled.button<ICustomButtonStyle>`
   font-size: 1rem;
-  font-family: ${MontSerrat.style.fontFamily};
-  background-color: ${({ disabled }) => (disabled ? "#838383" : "#24292b")};
+  background-color: ${({ $isDisabled }) =>
+    $isDisabled ? "#838383" : "#24292b"};
   border: none;
   outline: none;
   display: flex;
@@ -21,11 +28,11 @@ export const CustomButtons = styled.button<ICustomButtonStyle>`
   padding: 0.75rem 1rem;
   border-radius: 1rem;
   color: #fff;
-  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
+  cursor: ${({ $isDisabled }) => ($isDisabled ? "default" : "pointer")};
   max-width: 140px;
 `;
 export const CustomLoading = styled.span<ICustomLoadingStyle>`
-  display: ${({ active }) => (active ? "block" : "none")};
+  display: ${({ $isActive }) => ($isActive ? "block" : "none")};
   &:after {
     content: "";
     display: block;

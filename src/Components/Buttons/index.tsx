@@ -1,14 +1,25 @@
-import { CustomButtons, CustomLoading, MainButton } from "./styles";
+import { WrapCustomButtons, CustomLoading, MainButton } from "./styles";
 
-const Buttons: React.FC<IButtons> = ({ children, loading, ...props }) => {
+const CustomButtons: React.FC<ICustomButtons> = ({
+  children,
+  loading,
+  buttonDisabled,
+  onClick,
+  type,
+}) => {
   return (
     <MainButton>
-      <CustomButtons disabled={loading} {...props}>
+      <WrapCustomButtons
+        $isDisabled={loading || buttonDisabled}
+        onClick={onClick}
+        disabled={buttonDisabled}
+        type={type}
+      >
         {children}
-        <CustomLoading active={loading}></CustomLoading>
-      </CustomButtons>
+        <CustomLoading $isActive={loading}></CustomLoading>
+      </WrapCustomButtons>
     </MainButton>
   );
 };
 
-export default Buttons;
+export default CustomButtons;

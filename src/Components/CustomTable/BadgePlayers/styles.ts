@@ -1,4 +1,3 @@
-import { MontSerrat } from "@/styles/GlobalStyles/GlobalStyles";
 import { styled } from "styled-components";
 
 export const ContainerPlayers = styled.div`
@@ -17,7 +16,6 @@ export const ImagePlayers = styled.img`
 
 export const NamePlayers = styled.span`
   white-space: nowrap;
-  font-family: ${MontSerrat.style.fontFamily};
   display: flex;
   color: #d3d3d3;
 `;
